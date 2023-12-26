@@ -1,0 +1,142 @@
+<!-- data.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Your existing head content -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Page</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        body div{
+            padding : 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="company-info-container">
+        <!-- React app will be mounted here -->
+    </div>
+
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+<script src="https://unpkg.com/react-json-view@latest/dist/main.js"></script>
+   <script type="text/babel">
+    const { useState, useEffect } = React;
+    var username = "{{ username }}";
+    var password = "{{ password }}";
+
+    function App() {
+        const [companyData, setCompanyData] = useState([]);
+        const [error, setError] = useState('loading..');
+        const [token, setToken] = useState('');
+
+        async function login(username, password) {
+            const response = await fetch('http://localhost:8080/api/v1/api/token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+            if (data.detail) {
+                setError(data.detail);
+                return;
+            }
+            return { accessToken: data.access, refreshToken: data.refresh };
+        }
+
+        async function fetchCompanyData(accessToken) {
+            const response = await fetch('http://localhost:8080/api/v1/companies/', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (!response.ok) {
+                console.error(response);
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        }
+
+        async function refreshAccessToken(refreshToken) {
+            const response = await fetch('http://localhost:8080/api/v1/api/token/refresh/', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    refresh: refreshToken
+                })
+            });
+
+            const data = await response.json();
+            return data;
+        }
+
+        async function fetchData() {
+            try {
+                const { accessToken, refreshToken } = await login(username, password);
+                const { access } = await refreshAccessToken(refreshToken);
+                setToken(access);
+                var data = await fetchCompanyData(access);
+                console.log(data);
+                return data;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        useEffect(async () => {
+            var data = await fetchData();
+            setCompanyData(data);
+
+        }, []);
+
+        console.log(companyData);
+
+        return (
+            <div>
+                <h1>List of Items</h1>
+                <div id="json-view">
+                    [
+                    
+                    {
+                        companyData.length > 0 && companyData.map(obj => {
+                            return <div className="div">
+                                    <p>company_id : {obj.company_id}</p>
+                                    <p>url : {obj.url}</p>
+                                    <p>type : {obj.type}</p>
+                                    <p>name : {obj.name}</p>
+                                    <p>about : {obj.about}</p>
+                                    <p>location : {obj.location}</p>
+                                    <p>active : {obj.active}</p>
+                                    <p>added_date : {obj.added_date}</p>
+                            </div>
+                        })
+                    }
+                    ]
+                </div>
+            </div>
+        );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('company-info-container'));
+</script>
+
+</body>
+</html>

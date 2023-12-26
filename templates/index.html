@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Your existing head content -->
+    <title>DjangoRestFramework</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display : flex;
+            justify-content : center;
+            align-items : center;
+            height: 100vh;
+        }
+        div{
+            background-color: #f0f0f0;
+            box-shadow: 0 0.5px 10px 1px rgba(0, 0, 0, 0.5);
+            border-radius : 8px;
+            padding : 1rem;
+            width : 50%,
+            height:  40%,
+            display: grid;
+            justify-items: center;
+            align-Content: center;
+        }
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline : none;
+        &:focus {
+          border: 1px solid #ddd;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
+        }
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+        background-color: #333;
+        background-image: linear-gradient(to bottom, #333, #444);
+        color: #fff;
+        font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form method="post" action="{% url 'fetchdata' %}">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Enter Your Username!"/>
+            <input type="Password" name="password" placeholder="Enter Your Password!"/>
+            <button type="submit" class="btn">Fetch data</button>
+        </form>
+    </div>
+</body>
+</html>
