@@ -34,8 +34,8 @@ This project is a Django-based API backend that utilizes Django Rest Framework f
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/your-django-api-project.git
-    cd your-django-api-project
+    git clone https://github.com/your-username/Django_API_demo.git
+    cd Django_API_demo
     ```
 
 2. **Create a virtual environment:**
